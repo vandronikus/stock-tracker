@@ -1,7 +1,5 @@
 package com.luidenterprises.stocktracker.service.impl;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -19,12 +17,11 @@ import com.luidenterprises.stocktracker.config.RestTemplateConfiguration;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
 import com.luidenterprises.stocktracker.domain.Resolution;
-import com.luidenterprises.stocktracker.service.ApiService;
-import com.luidenterprises.stocktracker.util.StockUtils;
+import com.luidenterprises.stocktracker.service.FinnHubApiService;
 
 @Service
 	
-public class FinnHubApiServiceImpl implements ApiService {
+public class FinnHubApiServiceImpl implements FinnHubApiService {
 	Logger logger = LoggerFactory.getLogger(RestTemplateConfiguration.class);
 	
 	@Value("${finnhub.api.key}")

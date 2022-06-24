@@ -12,11 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.luidenterprises.stocktracker.config.aspect.LogMethodExecution;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
 import com.luidenterprises.stocktracker.dto.QuoteDTO;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteMapper;
-import com.luidenterprises.stocktracker.service.ApiService;
+import com.luidenterprises.stocktracker.service.FinnHubApiService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
 @RestController
@@ -25,9 +26,11 @@ public class StockTrackerController {
 	
 	
 	@Autowired
-	ApiService apiService;
+	FinnHubApiService apiService;	
 	
-	@GetMapping(value = "/{symbol}", produces = "application/json;v=1;")
+	
+	@LogMethodExecution
+	@GetMapping(value = "/{symbol}", produces = "application/json;v=1;")	
 	public ResponseEntity<QuoteDTO> getSingleStockCurrentPrice(@PathVariable String symbol) {
 		Optional<Quote> quoteOptional 		= apiService.getSymbolCurrentPrice(symbol);
 		Optional<QuoteDTO> quoteDTOOptional = Optional.ofNullable(QuoteMapper.INSTANCE.quoteToQuoteDTO(quoteOptional.get()));
@@ -35,7 +38,7 @@ public class StockTrackerController {
 	}
 	
 	
-	
+	@LogMethodExecution
 	@GetMapping(value = "/{symbol}/candlestick/{fromDate}/{toDate}", produces = "application/json;v=1;")
 	public ResponseEntity<QuoteCandleStick> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {
 		

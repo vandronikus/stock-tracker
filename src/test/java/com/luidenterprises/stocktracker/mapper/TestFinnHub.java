@@ -11,14 +11,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.util.Assert;
 
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
-import com.luidenterprises.stocktracker.service.ApiService;
+import com.luidenterprises.stocktracker.service.FinnHubApiService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @SpringBootTest
+@Slf4j
 public class TestFinnHub {
 	
 	@Autowired
-	ApiService apiService;
+	FinnHubApiService apiService;
 	
 	@Test
 	public void testFinnHubHistorialSymbolRequest() {		
@@ -27,7 +30,8 @@ public class TestFinnHub {
 		String from = StockUtils.toStringUnixTime(LocalDate.now().atStartOfDay().minus(10, ChronoUnit.DAYS).toInstant(ZoneOffset.ofHours(-4)));
 		
 		Optional<QuoteCandleStick> quoteList = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));
-		Assert.notNull(quoteList, "quoteList is not null.");		
+		log.info("quoteList: ", quoteList.get().toString());
+		Assert.notNull(quoteList.get(), "quoteList is not null.");		
 	}
 	
 

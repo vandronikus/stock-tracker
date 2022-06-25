@@ -18,7 +18,7 @@ public class LogMethodExecutionAspect {
 	
 	@Before("@annotation(LogMethodExecution)")
 	public void logMethodExecutionStart(JoinPoint joinPoint) throws Throwable {		
-		log.info("[{}]: Args: {}", joinPoint.getSignature().getDeclaringTypeName(), java.util.Arrays.toString(joinPoint.getArgs()));		
+		log.info("[{}] Start: Args: {}", joinPoint.getSignature().getDeclaringTypeName(), java.util.Arrays.toString(joinPoint.getArgs()));		
 	}
 	@Order(1)
 	@Around("@annotation(LogMethodExecution)")

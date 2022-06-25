@@ -21,7 +21,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler
 	@LogMethodExecution
 	public ResponseEntity<Object> handleException(RuntimeException exception, WebRequest request) throws JsonProcessingException {
-		//String bodyOfResponse = StockUtils.getObjectWriter().writeValueAsString(request);
 		ErrorResponse response = ErrorResponse.builder()
 								 .message(exception.getMessage())
 								 .statusCode("0")

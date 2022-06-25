@@ -15,14 +15,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luidenterprises.stocktracker.config.aspect.LogMethodExecution;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
+import com.luidenterprises.stocktracker.dto.QuoteCandlestickDTO;
 import com.luidenterprises.stocktracker.dto.QuoteDTO;
+import com.luidenterprises.stocktracker.dto.mapper.QuoteCandlestickMapper;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteMapper;
 import com.luidenterprises.stocktracker.service.FinnHubApiService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
 @RestController
-@RequestMapping("/stocks")
-public class StockTrackerController {
+@RequestMapping("/v1/stocks")
+public class StockTrackerControllerV1 {
 	
 	
 	@Autowired
@@ -40,7 +42,7 @@ public class StockTrackerController {
 	
 	@LogMethodExecution
 	@GetMapping(value = "/{symbol}/candlestick/{fromDate}/{toDate}", produces = "application/json;v=1;")
-	public ResponseEntity<QuoteCandleStick> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {
+	public ResponseEntity<QuoteCandlestickDTO> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {
 		
 		
 		Date fromDateObject = StockUtils.getISODate(fromDate);
@@ -51,10 +53,10 @@ public class StockTrackerController {
 		String from = StockUtils.toStringUnixTime(fromDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
 		
 		
-		Optional<QuoteCandleStick> quoteCandleStick = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));	
+		Optional<QuoteCandleStick> quoteCandleStickOptional = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));	
+		Optional<QuoteCandlestickDTO> quoteCandleStickDTOOptional = Optional.ofNullable(QuoteCandlestickMapper.INSTANCE.quoteCandlestickToQuoteCandlestickDTO(quoteCandleStickOptional.get()));
 		
-		//Optional<List<Quote>> listQuoteDTOOptional =
-		return ResponseEntity.of(quoteCandleStick);
+		return ResponseEntity.of(quoteCandleStickDTOOptional);
 		
 	}
 	

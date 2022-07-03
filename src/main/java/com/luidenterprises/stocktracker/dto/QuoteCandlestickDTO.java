@@ -11,8 +11,7 @@ public class QuoteCandlestickDTO {
 	private Resolution resolution;
 	private long fromUnixTimeStamp;
 	private long toUnixTimeStamp;
-	private boolean adjusted;
-	
+	private boolean adjusted;	
 	
 	/**
 	 * List of open prices

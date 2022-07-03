@@ -1,28 +1,27 @@
-package com.luidenterprises.stocktracker.service.impl;
+package com.luidenterprises.stocktracker.dao.impl;
 
 import java.util.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestTemplate;
 
-import com.luidenterprises.stocktracker.config.RestTemplateConfiguration;
+import com.luidenterprises.stocktracker.dao.StockTrackerDao;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
 import com.luidenterprises.stocktracker.domain.Resolution;
-import com.luidenterprises.stocktracker.service.FinnHubApiService;
 
-@Service
+import lombok.extern.slf4j.Slf4j;
+
+@Repository
+@Slf4j	
+public class StockTrackerDaoImplV1 {
 	
-public class FinnHubApiServiceImpl implements FinnHubApiService {
-	Logger logger = LoggerFactory.getLogger(RestTemplateConfiguration.class);
 	
 	@Value("${finnhub.api.key}")
 	private String finnHubApiKey;
@@ -38,7 +37,7 @@ public class FinnHubApiServiceImpl implements FinnHubApiService {
 
 
 	
-	@Override
+	//@Override
 	public Optional<Quote> getSymbolCurrentPrice(String symbol) {		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("X-Finnhub-Token", finnHubApiKey);
@@ -46,7 +45,7 @@ public class FinnHubApiServiceImpl implements FinnHubApiService {
 		return Optional.ofNullable(result.getBody());
 	}
 
-	@Override
+	//@Override
 	public Optional<QuoteCandleStick> getSymbolHistoricalPrice(String symbol, long from, long to) {	
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("X-Finnhub-Token", finnHubApiKey);

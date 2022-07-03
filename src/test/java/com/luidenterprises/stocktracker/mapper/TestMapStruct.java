@@ -36,7 +36,6 @@ public class TestMapStruct {
 		quote.setO(new BigDecimal(2.00));
 		quote.setP(  new BigDecimal(3.00));
 		
-		
 		QuoteDTO quoteDto = quoteMapper.quoteToQuoteDTO(quote);
 		Assert.notNull(quoteDto, "quoteDto is not null");		
 	}
@@ -53,8 +52,7 @@ public class TestMapStruct {
 		quoteCandleStick.setL(new ArrayList<Double>());
 		quoteCandleStick.setO(new ArrayList<Double>());
 		quoteCandleStick.setFromUnixTimeStamp(new Date().getTime());
-		quoteCandleStick.setToUnixTimeStamp(new Date().getTime());
-		
+		quoteCandleStick.setToUnixTimeStamp(new Date().getTime());		
 		
 		QuoteCandlestickDTO quoteCandleStickDTO = quoteCandlestickMapper.quoteCandlestickToQuoteCandlestickDTO(quoteCandleStick);
 		Assert.notNull(quoteCandleStickDTO, "quoteCandlestick is not null");

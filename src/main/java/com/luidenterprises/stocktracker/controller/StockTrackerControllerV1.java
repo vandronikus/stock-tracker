@@ -19,7 +19,7 @@ import com.luidenterprises.stocktracker.dto.QuoteCandlestickDTO;
 import com.luidenterprises.stocktracker.dto.QuoteDTO;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteCandlestickMapper;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteMapper;
-import com.luidenterprises.stocktracker.service.FinnHubApiService;
+import com.luidenterprises.stocktracker.service.StockTrackerService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
 @RestController
@@ -28,7 +28,7 @@ public class StockTrackerControllerV1 {
 	
 	
 	@Autowired
-	FinnHubApiService apiService;	
+	StockTrackerService apiService;	
 	
 	
 	@LogMethodExecution
@@ -42,12 +42,10 @@ public class StockTrackerControllerV1 {
 	
 	@LogMethodExecution
 	@GetMapping(value = "/{symbol}/candlestick/{fromDate}/{toDate}", produces = "application/json;v=1;")
-	public ResponseEntity<QuoteCandlestickDTO> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {
-		
+	public ResponseEntity<QuoteCandlestickDTO> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {	
 		
 		Date fromDateObject = StockUtils.getISODate(fromDate);
-		Date toDateObject 	= StockUtils.getISODate(toDate);
-		
+		Date toDateObject 	= StockUtils.getISODate(toDate);		
 		
 		String to = StockUtils.toStringUnixTime(toDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
 		String from = StockUtils.toStringUnixTime(fromDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
@@ -56,9 +54,12 @@ public class StockTrackerControllerV1 {
 		Optional<QuoteCandleStick> quoteCandleStickOptional = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));	
 		Optional<QuoteCandlestickDTO> quoteCandleStickDTOOptional = Optional.ofNullable(QuoteCandlestickMapper.INSTANCE.quoteCandlestickToQuoteCandlestickDTO(quoteCandleStickOptional.get()));
 		
-		return ResponseEntity.of(quoteCandleStickDTOOptional);
-		
+		return ResponseEntity.of(quoteCandleStickDTOOptional);		
 	}
+	
+	
+	
+	
 	
 	
 	

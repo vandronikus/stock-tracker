@@ -12,7 +12,10 @@ import com.luidenterprises.stocktracker.config.aspect.LogMethodExecution;
 import com.luidenterprises.stocktracker.dao.StockTrackerDao;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
-import com.luidenterprises.stocktracker.dto.SymbolLookupResponse;
+import com.luidenterprises.stocktracker.dto.BasicFinancialsDTO;
+import com.luidenterprises.stocktracker.dto.CompanyProfileDTO;
+import com.luidenterprises.stocktracker.dto.SymbolDataDTO;
+import com.luidenterprises.stocktracker.dto.SymbolLookupResponseDTO;
 import com.luidenterprises.stocktracker.exception.ServiceException;
 import com.luidenterprises.stocktracker.service.StockTrackerService;
 
@@ -45,9 +48,28 @@ public class StockTrackerServiceImpl implements StockTrackerService {
 
 	@Override
 	@LogMethodExecution
-	public SymbolLookupResponse getSymbolLookup(String symbol) {
-		ResponseEntity<SymbolLookupResponse> response = stockTrackerDao.getSymbolLookup(symbol);
-		return response.getBody();
+	public Optional<SymbolDataDTO> getSymbolLookup(String symbol) {
+		ResponseEntity<SymbolLookupResponseDTO> response = stockTrackerDao.getSymbolLookup(symbol);				
+		Optional<SymbolDataDTO> symbolDataOptional 		 = Optional.ofNullable(response.getBody())
+																   .get()
+																   .getResult()
+																   .stream()
+																   .filter(symbolData -> symbolData.getSymbol().equalsIgnoreCase(symbol))
+																   .findFirst();	
+		return symbolDataOptional;
+	}
+
+	@Override
+	@LogMethodExecution
+	public Optional<CompanyProfileDTO> getCompanyProfile(String symbol) {
+		ResponseEntity<CompanyProfileDTO> response = stockTrackerDao.getCompanyProfile(symbol);		
+		return Optional.ofNullable(response.getBody());		
+	}
+
+	@Override
+	public Optional<BasicFinancialsDTO> getBasicFinancials(String symbol) {
+		ResponseEntity<BasicFinancialsDTO> response = stockTrackerDao.getBasicFinancials(symbol);
+		return Optional.ofNullable(response.getBody());
 	}
 	
 	

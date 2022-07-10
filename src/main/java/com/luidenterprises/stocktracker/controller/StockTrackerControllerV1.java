@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,8 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.luidenterprises.stocktracker.config.aspect.LogMethodExecution;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
+import com.luidenterprises.stocktracker.dto.BasicFinancialsDTO;
+import com.luidenterprises.stocktracker.dto.CompanyProfileDTO;
 import com.luidenterprises.stocktracker.dto.QuoteCandlestickDTO;
 import com.luidenterprises.stocktracker.dto.QuoteDTO;
+import com.luidenterprises.stocktracker.dto.SymbolDataDTO;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteCandlestickMapper;
 import com.luidenterprises.stocktracker.dto.mapper.QuoteMapper;
 import com.luidenterprises.stocktracker.service.StockTrackerService;
@@ -45,16 +47,38 @@ public class StockTrackerControllerV1 {
 	public ResponseEntity<QuoteCandlestickDTO> getSingleStockPriceHistory(@PathVariable String symbol, @PathVariable String fromDate, @PathVariable String toDate) throws Exception {	
 		
 		Date fromDateObject = StockUtils.getISODate(fromDate);
-		Date toDateObject 	= StockUtils.getISODate(toDate);		
-		
-		String to = StockUtils.toStringUnixTime(toDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
-		String from = StockUtils.toStringUnixTime(fromDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
+		Date toDateObject 	= StockUtils.getISODate(toDate);			
+		String to 			= StockUtils.toStringUnixTime(toDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
+		String from 		= StockUtils.toStringUnixTime(fromDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
 		
 		
 		Optional<QuoteCandleStick> quoteCandleStickOptional = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));	
 		Optional<QuoteCandlestickDTO> quoteCandleStickDTOOptional = Optional.ofNullable(QuoteCandlestickMapper.INSTANCE.quoteCandlestickToQuoteCandlestickDTO(quoteCandleStickOptional.get()));
 		
 		return ResponseEntity.of(quoteCandleStickDTOOptional);		
+	}
+	
+	@LogMethodExecution
+	@GetMapping(value = "/{symbol}")
+	public ResponseEntity<SymbolDataDTO> getSymbolLookupData (@PathVariable String symbol) {
+		Optional<SymbolDataDTO> response = apiService.getSymbolLookup(symbol);
+		return ResponseEntity.of(response);				
+	}
+	
+	
+	@LogMethodExecution
+	@GetMapping(value = "/{symbol}/profile")
+	public ResponseEntity<CompanyProfileDTO> getCompanyProfile(@PathVariable String symbol) {
+		Optional<CompanyProfileDTO> response = apiService.getCompanyProfile(symbol);
+		return ResponseEntity.of(response);
+	}
+	
+	
+	@LogMethodExecution
+	@GetMapping(value ="/{symbol}/financials")
+	public ResponseEntity<BasicFinancialsDTO> getBasicFinancials(@PathVariable String symbol) {
+		Optional<BasicFinancialsDTO> response = apiService.getBasicFinancials(symbol);
+		return ResponseEntity.of(response);
 	}
 	
 	

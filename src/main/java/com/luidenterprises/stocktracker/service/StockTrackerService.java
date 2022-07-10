@@ -4,7 +4,9 @@ import java.util.Optional;
 
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
-import com.luidenterprises.stocktracker.dto.SymbolLookupResponse;
+import com.luidenterprises.stocktracker.dto.BasicFinancialsDTO;
+import com.luidenterprises.stocktracker.dto.CompanyProfileDTO;
+import com.luidenterprises.stocktracker.dto.SymbolDataDTO;
 
 public interface StockTrackerService {
 	
@@ -13,6 +15,8 @@ public interface StockTrackerService {
 	
 	public Optional<Quote> getSymbolCurrentPrice(String symbol);
 	public Optional<QuoteCandleStick> getSymbolHistoricalPrice(String symbol, long fromUnixTimestamp, long toUnixTimeStamp);
-	public SymbolLookupResponse getSymbolLookup(String symbol);
+	public Optional<SymbolDataDTO> getSymbolLookup(String symbol);
+	public Optional<CompanyProfileDTO> getCompanyProfile(String symbol);
+	public Optional<BasicFinancialsDTO> getBasicFinancials(String symbol);
 
 }

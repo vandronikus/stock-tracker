@@ -3,7 +3,7 @@ package com.luidenterprises.stocktracker.dto;
 import lombok.Data;
 
 @Data
-public class SymbolData {
+public class SymbolDataDTO {
 	
 	private String description;
 	private String symbol;

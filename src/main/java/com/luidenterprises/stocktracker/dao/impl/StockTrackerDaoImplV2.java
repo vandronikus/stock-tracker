@@ -2,7 +2,6 @@ package com.luidenterprises.stocktracker.dao.impl;
 
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,11 +12,14 @@ import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.luidenterprises.stocktracker.config.aspect.LogMethodExecution;
 import com.luidenterprises.stocktracker.dao.StockTrackerDao;
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
 import com.luidenterprises.stocktracker.domain.Resolution;
-import com.luidenterprises.stocktracker.dto.SymbolLookupResponse;
+import com.luidenterprises.stocktracker.dto.BasicFinancialsDTO;
+import com.luidenterprises.stocktracker.dto.CompanyProfileDTO;
+import com.luidenterprises.stocktracker.dto.SymbolLookupResponseDTO;
 import com.luidenterprises.stocktracker.util.StockConstants;
 
 import reactor.core.publisher.Mono;
@@ -44,6 +46,7 @@ public class StockTrackerDaoImplV2 implements StockTrackerDao {
 	
 	
 	@Override
+	@LogMethodExecution
 	public ResponseEntity<Quote> getSymbolCurrentPrice(String symbol) {
 		
 		Mono<ResponseEntity<Quote>> quoteResponse = WebClient.builder()
@@ -61,6 +64,7 @@ public class StockTrackerDaoImplV2 implements StockTrackerDao {
 	}
 
 	@Override
+	@LogMethodExecution
 	public ResponseEntity<QuoteCandleStick> getSymbolHistoricalPrice(String symbol, long fromUnixTimestamp, long toUnixTimeStamp) {
 		
 		Mono<ResponseEntity<QuoteCandleStick>> quoteResponse = WebClient.builder()
@@ -80,8 +84,9 @@ public class StockTrackerDaoImplV2 implements StockTrackerDao {
 	
 	
 	@Override
-	public ResponseEntity<SymbolLookupResponse> getSymbolLookup(String symbol) {
-		Mono<ResponseEntity<SymbolLookupResponse>> symbolLookupResponse = WebClient.builder()
+	@LogMethodExecution
+	public ResponseEntity<SymbolLookupResponseDTO> getSymbolLookup(String symbol) {
+		Mono<ResponseEntity<SymbolLookupResponseDTO>> symbolLookupResponse = WebClient.builder()
 																				   .clientConnector(new ReactorClientHttpConnector(httpClient))
 																	   			   .baseUrl(baseUrl.concat(endpointPaths.get("symbolLookup")))
 																	   			   .defaultHeader(StockConstants.FINNHUB_XAPI_KEY_HEADER, finnHubApiKey)
@@ -90,16 +95,48 @@ public class StockTrackerDaoImplV2 implements StockTrackerDao {
 																	   			   .get()
 																	   			   .accept(MediaType.APPLICATION_JSON)
 																	   			   .retrieve()						
-																	   			   .toEntity(SymbolLookupResponse.class);	
+																	   			   .toEntity(SymbolLookupResponseDTO.class);	
 		
 		 return symbolLookupResponse.block();
 		 
 		 
 	}
+
+	@Override
+	@LogMethodExecution
+	public ResponseEntity<CompanyProfileDTO> getCompanyProfile(String symbol) {
+		Mono<ResponseEntity<CompanyProfileDTO>> companyProfileResponse = WebClient.builder()
+				   																  .clientConnector(new ReactorClientHttpConnector(httpClient))
+				   																  .baseUrl(baseUrl.concat(endpointPaths.get("companyProfile")))
+				   																  .defaultHeader(StockConstants.FINNHUB_XAPI_KEY_HEADER, finnHubApiKey)
+				   																  .defaultUriVariables(Collections.singletonMap("s", symbol))
+				   																  .build()
+				   																  .get()
+				   																  .accept(MediaType.APPLICATION_JSON)
+				   																  .retrieve()						
+				   																  .toEntity(CompanyProfileDTO.class);	
+		
+		return companyProfileResponse.block();
+	}
+
 	
 	
-	
-	
+	@Override
+	@LogMethodExecution
+	public ResponseEntity<BasicFinancialsDTO> getBasicFinancials(String symbol) {
+		Mono<ResponseEntity<BasicFinancialsDTO>> companyProfileResponse = WebClient.builder()
+					  															  .clientConnector(new ReactorClientHttpConnector(httpClient))
+					  															  .baseUrl(baseUrl.concat(endpointPaths.get("financials")))
+					  															  .defaultHeader(StockConstants.FINNHUB_XAPI_KEY_HEADER, finnHubApiKey)
+					  															  .defaultUriVariables(Collections.singletonMap("s", symbol))
+					  															  .build()
+					  															  .get()
+					  															  .accept(MediaType.APPLICATION_JSON)
+					  															  .retrieve()						
+					  															  .toEntity(BasicFinancialsDTO.class);	
+
+		return companyProfileResponse.block();
+	}
 	
 	
 	

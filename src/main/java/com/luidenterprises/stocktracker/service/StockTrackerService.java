@@ -1,6 +1,7 @@
 package com.luidenterprises.stocktracker.service;
 
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import com.luidenterprises.stocktracker.domain.Quote;
 import com.luidenterprises.stocktracker.domain.QuoteCandleStick;
@@ -18,5 +19,7 @@ public interface StockTrackerService {
 	public Optional<SymbolDataDTO> getSymbolLookup(String symbol);
 	public Optional<CompanyProfileDTO> getCompanyProfile(String symbol);
 	public Optional<BasicFinancialsDTO> getBasicFinancials(String symbol);
+	
+	public Future<String> doSomething() throws InterruptedException;
 
 }

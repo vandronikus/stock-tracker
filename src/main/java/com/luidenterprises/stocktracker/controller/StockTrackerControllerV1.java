@@ -3,9 +3,11 @@
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +26,12 @@ import com.luidenterprises.stocktracker.dto.mapper.QuoteMapper;
 import com.luidenterprises.stocktracker.service.StockTrackerService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
 @RestController
 @RequestMapping("/v1/stocks")
+@Slf4j
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class StockTrackerControllerV1 {
 	
 	
@@ -33,11 +39,12 @@ public class StockTrackerControllerV1 {
 	StockTrackerService apiService;	
 	
 	
-	@LogMethodExecution
+	@LogMethodExecution	
 	@GetMapping(value = "/{symbol}", produces = "application/json;v=1;")	
 	public ResponseEntity<QuoteDTO> getSingleStockCurrentPrice(@PathVariable String symbol) {
 		Optional<Quote> quoteOptional 		= apiService.getSymbolCurrentPrice(symbol);
-		Optional<QuoteDTO> quoteDTOOptional = Optional.ofNullable(QuoteMapper.INSTANCE.quoteToQuoteDTO(quoteOptional.get()));
+		Optional<QuoteDTO> quoteDTOOptional = Optional.ofNullable(QuoteMapper.INSTANCE.quoteToQuoteDTO(quoteOptional.get()));	
+		
 		return ResponseEntity.of(quoteDTOOptional);
 	}
 	
@@ -52,14 +59,14 @@ public class StockTrackerControllerV1 {
 		String from 		= StockUtils.toStringUnixTime(fromDateObject.toInstant().truncatedTo(ChronoUnit.DAYS));
 		
 		
-		Optional<QuoteCandleStick> quoteCandleStickOptional = apiService.getSymbolHistoricalPrice("TSLA", Long.parseLong(from), Long.parseLong(to));	
+		Optional<QuoteCandleStick> quoteCandleStickOptional = apiService.getSymbolHistoricalPrice(symbol, Long.parseLong(from), Long.parseLong(to));	
 		Optional<QuoteCandlestickDTO> quoteCandleStickDTOOptional = Optional.ofNullable(QuoteCandlestickMapper.INSTANCE.quoteCandlestickToQuoteCandlestickDTO(quoteCandleStickOptional.get()));
 		
 		return ResponseEntity.of(quoteCandleStickDTOOptional);		
 	}
 	
 	@LogMethodExecution
-	@GetMapping(value = "/{symbol}")
+	@GetMapping(value = "/{symbol}/data")
 	public ResponseEntity<SymbolDataDTO> getSymbolLookupData (@PathVariable String symbol) {
 		Optional<SymbolDataDTO> response = apiService.getSymbolLookup(symbol);
 		return ResponseEntity.of(response);				

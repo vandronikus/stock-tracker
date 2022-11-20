@@ -18,8 +18,6 @@ import com.luidenterprises.stocktracker.dto.SymbolDataDTO;
 import com.luidenterprises.stocktracker.service.StockTrackerService;
 import com.luidenterprises.stocktracker.util.StockUtils;
 
-import lombok.extern.slf4j.Slf4j;
-
 @SpringBootTest
 public class StockTrackerTest {
 	
@@ -43,14 +41,20 @@ public class StockTrackerTest {
 		System.out.println("quoteResponse: " + quoteResponse.get().toString());
 	}
 	
+	//@Test
+	public void testNonExistantCurrentPriceApi() {
+		Optional<Quote> quoteResponse = apiService.getSymbolCurrentPrice("AAAAAAAAA");		
+		Assert.isNull(quoteResponse.get(), "quoteResponse is not null.");	
+		System.out.println("quoteResponse: " + quoteResponse.get().toString());
+	}
+	
 	
 	@Test
 	public void testFinnHubSymbolLookup() {
 		Optional<SymbolDataDTO> symbolData = apiService.getSymbolLookup("TSLA");
 		System.out.println("SymbolLookupResponse: " + symbolData);	
 		Assert.notNull(symbolData.get(), "SymbolLookupResponse should not be null");
-		Assert.notNull(symbolData.get().getDescription(), "SymbolResponse description list should not be empty.");
-			
+		Assert.notNull(symbolData.get().getDescription(), "SymbolResponse description list should not be empty.");			
 	}
 	
 	

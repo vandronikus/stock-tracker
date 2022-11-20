@@ -1,10 +1,13 @@
 package com.luidenterprises.stocktracker.service.impl;
 
 import java.util.Optional;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
 
@@ -70,6 +73,18 @@ public class StockTrackerServiceImpl implements StockTrackerService {
 	public Optional<BasicFinancialsDTO> getBasicFinancials(String symbol) {
 		ResponseEntity<BasicFinancialsDTO> response = stockTrackerDao.getBasicFinancials(symbol);
 		return Optional.ofNullable(response.getBody());
+	}
+
+	@Override
+	@Async
+	public Future<String> doSomething() throws InterruptedException {
+		int sleepTime = 1000 * (int)(Math.random() * 10);
+		log.info("Method started in thread {} ", Thread.currentThread().getName());
+		Thread.sleep(sleepTime);
+		log.info("Method finished in thread {} ", Thread.currentThread().getName());
+		return new AsyncResult<String>("done - sleep time for thread " + Thread.currentThread().getName() + " - " + sleepTime);
+		
+		
 	}
 	
 	
